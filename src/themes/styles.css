@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Shadows+Into+Light&display=swap');
+.anticon{
+    vertical-align: 0 !important;
+}
+.display-linebreak {
+    white-space: pre-line;
+}
+.text-container-align-middle{
+    display: table;
+    height: 4em;
+    text-align: center;
+    width: 100%;
+}
+.text-align-middle{
+    display: table-cell;
+    vertical-align: middle;
+}
+.feed-text-container{
+    padding: 1em 2em 1em 2em;
+}
