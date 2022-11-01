@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read: if isSignedIn()
+      allow write: if request.auth.uid == userId
+    }
+     match /recipes/{recipeId} {
+      allow read;
+      allow create: if isSignedIn()
+      allow delete: if isUserResourceOwner()
+      allow update: if isUserResourceOwner()
+    }
+    
+    function isSignedIn(){
+    	return request.auth != null
+    }
+    
+    function isUserResourceOwner(){
+    	return request.auth.uid == resource.data.ownerId
+    }
+  }
+}
