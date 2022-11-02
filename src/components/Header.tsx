@@ -1,5 +1,5 @@
 import { Flex, Box } from '@chakra-ui/react'
-import { UserOutlined, HomeOutlined } from '@ant-design/icons'
+import { UserOutlined, HomeOutlined, TeamOutlined } from '@ant-design/icons'
 import { useAuth } from '@/context/AuthContext'
 
 import { ButtonLink } from './Menu'
@@ -14,6 +14,7 @@ function Header() {
             <ButtonLink link='/' name={<HomeOutlined />} />
           </Box>
           <Box>
+            <ButtonLink link={`/trainers`} name={<TeamOutlined />} />
             <ButtonLink
               link={`/users/${currentUser!.uid}`}
               name={<UserOutlined />}
