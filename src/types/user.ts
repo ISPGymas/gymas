@@ -35,6 +35,7 @@ export type User = {
 }
 
 export type GymClient = {
+  id: string
   userId: string
   gender: GenderEnum
   age: number
@@ -46,6 +47,7 @@ export type GymClient = {
 }
 
 export type Trainer = {
+  id: string
   userId: string
   salary: number
   experience: number
@@ -53,6 +55,7 @@ export type Trainer = {
 }
 
 export type Administrator = {
+  id: string
   userId: string
   salary: number
   employment_type: EmploymentTypeEnum
