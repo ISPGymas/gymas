@@ -22,7 +22,6 @@ const LinkItems: Array<LinkItemProps> = [
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const { currentUser } = useAuth();
-  console.log(currentUser);
 
   return (
     <Box

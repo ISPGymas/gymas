@@ -1,8 +1,7 @@
-import { GymClient, Trainer, Administrator } from '@/types';
-import { User } from 'firebase/auth';
+import { ExpandedUser } from '@/types';
 
 export type AuthContextType = {
-  currentUser: ((User & { userInfo: GymClient | Trainer | Administrator | Object }) & { userType: string }) | null;
+  currentUser: ExpandedUser | null;
   register: (...props: any) => any;
   login: (...props: any) => any;
   loginWithFacebook: (...props: any) => any;
