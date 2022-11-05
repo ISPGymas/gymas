@@ -1,6 +1,14 @@
+import { User as FirebaseUser } from 'firebase/auth';
+
 export enum GenderEnum {
   MALE = 'Male',
   FEMALE = 'Female',
+}
+
+export enum UserType {
+  CLIENT = 'Client',
+  ADMIN = 'Admin',
+  TRAINER = 'Trainer',
 }
 
 export enum ActivityLevelEnum {
@@ -25,38 +33,44 @@ export enum EducationLevelEnum {
   HIGHER = 'Higher',
 }
 
+export type ExpandedUser = FirebaseUser & {
+  userData?: User;
+  userInfo?: GymClient | Trainer | Administrator;
+  userType?: UserType;
+};
+
 export type User = {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  avatar?: string
-}
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  avatar?: string;
+};
 
 export type GymClient = {
-  id: string
-  userId: string
-  gender: GenderEnum
-  age: number
-  weight: number
-  heigth: number
-  activity: ActivityLevelEnum
-  disabilities?: string
-  alergies?: string
-}
+  id: string;
+  userId: string;
+  gender: GenderEnum;
+  age: number;
+  weight: number;
+  heigth: number;
+  activity: ActivityLevelEnum;
+  disabilities?: string;
+  alergies?: string;
+};
 
 export type Trainer = {
-  id: string
-  userId: string
-  salary: number
-  experience: number
-  education: EducationLevelEnum
-}
+  id: string;
+  userId: string;
+  salary: number;
+  experience: number;
+  education: EducationLevelEnum;
+};
 
 export type Administrator = {
-  id: string
-  userId: string
-  salary: number
-  employment_type: EmploymentTypeEnum
-}
+  id: string;
+  userId: string;
+  salary: number;
+  employment_type: EmploymentTypeEnum;
+};

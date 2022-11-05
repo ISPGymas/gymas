@@ -8,11 +8,10 @@ import {
   signInWithPopup,
   signOut,
   sendPasswordResetEmail,
-  User,
 } from 'firebase/auth';
 
 import firebaseApp, { firebaseDb } from '@/firebase';
-import { Administrator, AuthContextType, GymClient, Trainer } from '@/types';
+import { Administrator, AuthContextType, ExpandedUser, GymClient, Trainer, User, UserType } from '@/types';
 import { Spinner } from '@chakra-ui/react';
 import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { uploadFile } from '@/utils';
@@ -42,9 +41,7 @@ export const AuthProvider = ({
 }) => {
   const router = useRouter();
 
-  const [currentUser, setCurrentUser] = useState<
-    ((User & { userInfo: GymClient | Trainer | Administrator | Object }) & { userType: string }) | null
-  >(null);
+  const [currentUser, setCurrentUser] = useState<ExpandedUser | null>(null);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [initRendered, setInitRendered] = useState(false);
@@ -96,54 +93,65 @@ export const AuthProvider = ({
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      let userInfo = {};
-      let userType = '';
+      user ? setUserLoggedIn(true) : setUserLoggedIn(false);
+      setInitRendered(true);
+
+      if (!user) {
+        return;
+      }
+
+      let userInfo;
+      let userType;
+      let userData;
+      const getUser = async () => {
+        const userDoc = await getDoc(doc(firebaseDb, 'users', user.uid as string));
+        const userDocData = userDoc.data();
+        if (userDocData) {
+          userData = { ...userDocData, id: user.uid } as User;
+        }
+      };
 
       const getClient = async () => {
-        if (!user) return;
         const clientCollection = await getDocs(
-          query(collection(firebaseDb, 'clients'), where('userId', '==', user?.uid))
+          query(collection(firebaseDb, 'clients'), where('userId', '==', user.uid))
         );
         const clientDoc = clientCollection.docs[0];
         const clientData = clientDoc?.data() as GymClient;
         if (clientData) {
           userInfo = { ...clientData, id: clientDoc.id };
-          userType = 'client';
+          userType = UserType.CLIENT;
         }
       };
 
       const getTrainer = async () => {
-        if (!user) return;
         const trainerCollection = await getDocs(
-          query(collection(firebaseDb, 'trainers'), where('userId', '==', user?.uid))
+          query(collection(firebaseDb, 'trainers'), where('userId', '==', user.uid))
         );
         const trainerDoc = trainerCollection.docs[0];
         const trainerData = trainerDoc?.data() as Trainer;
         if (trainerData) {
           userInfo = { ...trainerData, id: trainerDoc.id };
-          userType = 'trainer';
+          userType = UserType.TRAINER;
         }
       };
 
       const getAdmin = async () => {
-        if (!user) return;
-        const adminCollection = await getDocs(
-          query(collection(firebaseDb, 'admins'), where('userId', '==', user?.uid))
-        );
+        const adminCollection = await getDocs(query(collection(firebaseDb, 'admins'), where('userId', '==', user.uid)));
         const adminDoc = adminCollection.docs[0];
         const adminData = adminDoc?.data() as Administrator;
         if (adminData) {
           userInfo = { ...adminData, id: adminDoc.id };
-          userType = 'admin';
+          userType = UserType.ADMIN;
         }
       };
 
+      await getUser();
       await getClient();
       await getTrainer();
       await getAdmin();
 
-      const currUser = Object.assign({ userInfo, userType }, user);
-      setCurrentUser(currUser);
+      const expandedUser = { ...user, userData, userInfo, userType };
+      setCurrentUser(expandedUser);
 
       user ? setUserLoggedIn(true) : setUserLoggedIn(false);
 

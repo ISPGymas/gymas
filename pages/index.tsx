@@ -28,7 +28,7 @@ const Home: NextPage = () => {
     return <Spinner />;
   }
 
-  if (!currentUser?.userType) {
+  if (currentUser && !currentUser.userType) {
     return <BecomeClientModal userId={currentUser!.uid} />;
   }
 
