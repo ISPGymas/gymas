@@ -14,7 +14,7 @@ import {
   
   const CreateWorkoutModal = ({ userId }: { userId: string }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-  
+    //ok
     return (
       <>
         <Box maxW="md" textAlign="center" borderWidth="1px" borderRadius="lg" overflow="hidden" m={2} onClick={onOpen}>
