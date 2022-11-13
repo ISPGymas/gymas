@@ -3,7 +3,7 @@ import WorkoutComponent from '@/components/workout/Workout';
 import { useAuth } from '@/context/AuthContext';
 import { firebaseDb } from '@/firebase';
 import { Workout } from '@/types/gym';
-import { Box, SimpleGrid, Spinner } from '@chakra-ui/react';
+import { SimpleGrid, Spinner } from '@chakra-ui/react';
 import { getDocs } from '@firebase/firestore';
 import { collection, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
@@ -41,7 +41,7 @@ const WorkoutsList = () => {
           {trainers.map((workout) => (
             <WorkoutComponent key={workout.id} workout={workout}></WorkoutComponent>
           ))}
-        <CreateWorkoutModal userId={currentUser!.uid}></CreateWorkoutModal>
+          <CreateWorkoutModal userId={currentUser?.uid || ''}></CreateWorkoutModal>
         </SimpleGrid>
       ) : (
         <Spinner />

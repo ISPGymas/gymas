@@ -39,9 +39,25 @@ export type Workout = {
   name: string;
   description: string;
   trainerId: string;
-  price: Number;
+  price: number;
   locationId: string;
-  groupSize: Number;
-}
+  groupSize: number;
+  reserved: number;
+};
 
+export type WorkoutLocation = {
+  id: String;
+  addressId: String;
+  area: number;
+  description: String;
+  name: String;
+};
 
+export type WorkoutAddress = {
+  buildingNr: string | number;
+  city: string;
+  country: string;
+  disctrict: string;
+  street: string;
+  zipCode: string;
+};
