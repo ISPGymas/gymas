@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Center, Heading, VStack, Divider, Button, SimpleGrid } from '@chakra-ui/react';
-import { collection, documentId, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, documentId, getDocs, query, updateDoc, where } from 'firebase/firestore';
 
 import { GymClient, Trainer, User } from '@/types';
 import { useAuth } from '@/context/AuthContext';
@@ -28,47 +28,63 @@ const GymClientProfile = ({ client, user }: { client: GymClient; user: User }) =
     router.replace('/login');
   };
 
-  useEffect(() => {
-    const retrieveData = async () => {
-      setMemberships([]);
-      setUserTrainers([]);
-      const reservationsCollections = await getDocs(
-        query(collection(firebaseDb, 'reservations'), where('clientId', '==', client.id))
-      );
-      const reservationsDocs = reservationsCollections.docs;
-      const allReservations = await Promise.all(
-        reservationsDocs.map(async (doc) => {
-          const reservationData = doc.data() as Reservation;
-          return { ...reservationData, id: doc.id };
-        })
-      );
-      const uniqueTrainerIds = [...new Set(allReservations.map((res) => res.trainerId))];
+  const retrieveData = useCallback(async () => {
+    setMemberships([]);
+    setUserTrainers([]);
+
+    const reservationsCollections = await getDocs(
+      query(collection(firebaseDb, 'reservations'), where('clientId', '==', client.id))
+    );
+
+    const reservationsDocs = reservationsCollections.docs;
+    const allReservations = await Promise.all(
+      reservationsDocs.map(async (doc) => {
+        const reservationData = doc.data() as Reservation;
+        return { ...reservationData, id: doc.id };
+      })
+    );
+    const uniqueTrainerIds = [...new Set(allReservations.map((res) => res.trainerId))];
+
+    if (uniqueTrainerIds.length > 0) {
       const trainersCollections = await getDocs(
         query(collection(firebaseDb, 'trainers'), where(documentId(), 'in', uniqueTrainerIds))
       );
       const trainersDocs = trainersCollections.docs;
-      await Promise.all(
-        trainersDocs.map(async (doc) => {
-          const trainerData = doc.data() as Trainer;
-          setUserTrainers((currentValues) => [...currentValues, { ...trainerData, id: doc.id }]);
-        })
-      );
-      const membershipCollections = await getDocs(
-        query(collection(firebaseDb, 'memberships'), where('clientId', '==', client.id))
-      );
-      const membershipDocs = membershipCollections.docs;
-      await Promise.all(
-        membershipDocs.map(async (doc) => {
-          const membershipData = doc.data() as Membership;
-          setMemberships((currentValues) => [...currentValues, { ...membershipData, id: doc.id }]);
-        })
-      );
-      setLoading(false);
-      return;
-    };
+      const trainersList: Trainer[] = [];
+      trainersDocs.map(async (doc) => {
+        const trainerData = doc.data() as Trainer;
+        trainersList.push({ ...trainerData, id: doc.id });
+      });
+      setUserTrainers(trainersList);
+    }
 
-    retrieveData();
+    const membershipCollections = await getDocs(
+      query(collection(firebaseDb, 'memberships'), where('clientId', '==', client.id))
+    );
+
+    const membershipDocs = membershipCollections.docs;
+    const membershipsList: Membership[] = [];
+    await Promise.all(
+      membershipDocs.map((doc) => {
+        const membershipData = doc.data() as Membership;
+        membershipsList.push({ ...membershipData, id: doc.id });
+      })
+    );
+    setMemberships(membershipsList);
+
+    setLoading(false);
+    return;
   }, [client]);
+
+  useEffect(() => {
+    retrieveData();
+  }, [retrieveData]);
+
+  const handleMembershipStatusChange = async (membershipId: string, status: string) => {
+    const docRef = await doc(firebaseDb, 'memberships', membershipId);
+    await updateDoc(docRef, { status });
+    retrieveData();
+  };
 
   return (
     <>
@@ -93,7 +109,11 @@ const GymClientProfile = ({ client, user }: { client: GymClient; user: User }) =
             <Heading>Memberships</Heading>
             <SimpleGrid columns={[1, 1, 2, 2, 3, 3]} templateRows={'masonry'}>
               {memberships.map((membership) => (
-                <MembershipComponent key={membership.id} membership={membership}></MembershipComponent>
+                <MembershipComponent
+                  key={membership.id}
+                  membership={membership}
+                  onStatusChange={handleMembershipStatusChange}
+                />
               ))}
             </SimpleGrid>
           </Center>

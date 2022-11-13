@@ -7,24 +7,19 @@ import {
   ModalCloseButton,
   useDisclosure,
   Button,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 
-import BecomeClientForm from './BecomeClientForm'
+import BecomeClientForm from './BecomeClientForm';
 
 const BecomeClientModal = ({ userId }: { userId: string }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
-      <Button variant='primary' width='full' onClick={onOpen}>
+      <Button variant="primary" width="full" onClick={onOpen}>
         Become client
       </Button>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size='xl'
-        scrollBehavior='inside'
-      >
+      <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Become our gym client</ModalHeader>
@@ -35,7 +30,7 @@ const BecomeClientModal = ({ userId }: { userId: string }) => {
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default BecomeClientModal
+export default BecomeClientModal;
