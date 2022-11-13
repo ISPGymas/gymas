@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
+import { string } from 'yup';
 
 export enum MembershipType {
   BASIC = 'BASIC',
@@ -8,6 +9,11 @@ export enum MembershipType {
 export enum MembershipStatus {
   ACTIVE = 'Active',
   DISABLED = 'Disabled',
+}
+
+export enum WorkoutType {
+  GROUP = 'Group',
+  SOLO = 'Solo',
 }
 
 export type Membership = {
@@ -26,4 +32,32 @@ export type Reservation = {
   workoutId: string;
   end_date: Date;
   start_date: Date;
+};
+
+export type Workout = {
+  id: string;
+  name: string;
+  description: string;
+  trainerId: string;
+  price: number;
+  locationId: string;
+  groupSize: number;
+  reserved: number;
+};
+
+export type WorkoutLocation = {
+  id: String;
+  addressId: String;
+  area: number;
+  description: String;
+  name: String;
+};
+
+export type WorkoutAddress = {
+  buildingNr: string | number;
+  city: string;
+  country: string;
+  disctrict: string;
+  street: string;
+  zipCode: string;
 };
