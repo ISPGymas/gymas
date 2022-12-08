@@ -22,7 +22,7 @@ const Workout: NextPage = () => {
   const { id: workoutId } = router.query;
 
   const getIsReserveDisabled = useCallback(async () => {
-    if (!workout || !currentUser) {
+    if (!workoutId || !currentUser) {
       return;
     }
     const reservationsDoc = await getDocs(
@@ -34,7 +34,7 @@ const Workout: NextPage = () => {
     );
 
     setAlreadyReserved((reservationsDoc?.docs || []).length > 0);
-  }, [currentUser, workout, workoutId]);
+  }, [currentUser, workoutId]);
 
   const fetchWorkoutData = useCallback(async () => {
     const workoutDoc = await getDoc(doc(firebaseDb, 'workouts', workoutId as string));
