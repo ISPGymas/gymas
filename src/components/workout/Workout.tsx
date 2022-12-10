@@ -6,10 +6,14 @@ import { firebaseDb } from '@/firebase';
 import { useRouter } from 'next/router';
 import { Workout } from '@/types/gym';
 import SignUpButton from '../SignUpButton';
+import EditWorkoutModal from './EditWorkoutModal';
+import { useAuth } from '@/context/AuthContext';
+import DeleteWorkoutModal from './DeleteWorkoutModal';
 
 const WorkoutComponent = ({ workout }: { workout: Workout }) => {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     const getWorkout = async () => {
@@ -29,9 +33,14 @@ const WorkoutComponent = ({ workout }: { workout: Workout }) => {
       borderRadius="lg"
       overflow="hidden"
       m={2}
-      onClick={() => router.replace(`/workouts/${workout.id}`)}
     >
-      <Box p="6">
+      <Box>
+          <EditWorkoutModal workout={workout}></EditWorkoutModal>
+      </Box>
+      <Box>
+          <DeleteWorkoutModal userId={user.id} workoutId={workout.id}></DeleteWorkoutModal>
+      </Box>
+      <Box p="6" onClick={() => router.replace(`/workouts/${workout.id}`)}>
         <Box mt="1" fontWeight="bold" as="h4" lineHeight="tight" noOfLines={1}>
         {workout.name}
         </Box>

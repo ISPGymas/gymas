@@ -1,34 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { Button, SimpleGrid, GridItem, Alert, AlertIcon, Heading, useBreakpointValue } from '@chakra-ui/react';
 
 import TextField from '@/components/form/TextField';
 import { firebaseDb } from '@/firebase';
-import { ActivityLevelEnum, GenderEnum, Trainer, User } from '@/types';
+import { ActivityLevelEnum, GenderEnum, User } from '@/types';
 import SelectField from '../form/SelectField';
-import { MembershipStatus, MembershipType, WorkoutType } from '@/types/gym';
+import { MembershipStatus, MembershipType, Workout, WorkoutLocation, WorkoutType } from '@/types/gym';
 import TextAreaField from '../form/TextAreaField';
 import { useAuth } from '@/context/AuthContext';
-import router from 'next/router';
 
-const CreateWorkoutForm = ({closeHandler }: {closeHandler: any }) => {
+const EditWorkoutForm = ({closeHandler, workout }: {closeHandler: any, workout: Workout }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const colSpan = useBreakpointValue({ base: 2, md: 1 });
   const { currentUser } = useAuth();
-
+  const workoutRef = doc(firebaseDb, 'workouts', workout.id)
   return (
     <Formik
       initialValues={{
-        name: '',
-        description: '',
-        price: 0,
-        locationId: '',
+        name: workout.name,
+        description: workout.description,
+        price: workout.price,
+        location: "Pramonės gym-",
         type: WorkoutType.GROUP,
-        maxGroupSize: 0,
-        trainerId: currentUser?.displayName,
+        maxGroupSize: workout.groupSize,
+        trainerId: workout.trainerId,
       }}
       validationSchema={yup.object({
         //TODO add validation
@@ -38,9 +37,7 @@ const CreateWorkoutForm = ({closeHandler }: {closeHandler: any }) => {
           setError('');
           setLoading(true);
 
-          const client = await addDoc(collection(firebaseDb, 'workouts'), {
-            ...clientData
-          });
+          await updateDoc(workoutRef, clientData);
         } catch (error) {
           console.warn(error);
           setError('Failed to create client. Please try again later');
@@ -104,7 +101,7 @@ const CreateWorkoutForm = ({closeHandler }: {closeHandler: any }) => {
             </GridItem>
             <GridItem colSpan={2}>
               <Button isLoading={loading} variant="primary" width="full" mt={4} type="submit">
-                Create workout
+                Edit workout
               </Button>
             </GridItem>
             {error && (
@@ -120,4 +117,4 @@ const CreateWorkoutForm = ({closeHandler }: {closeHandler: any }) => {
   );
 };
 
-export default CreateWorkoutForm;
+export default EditWorkoutForm;
