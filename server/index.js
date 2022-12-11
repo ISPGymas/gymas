@@ -63,7 +63,10 @@ cron.schedule('0 0 */1 * * *', async () => {
       .map((doc) => {
         return doc.data().phone;
       })
-      .filter((phone) => !!phone);
+      .filter((phone) => !!phone)
+      .filter((phone, index, self) => {
+        return self.indexOf(phone) === index;
+      });
 
     phones.forEach((phone) => {
       console.log(phone);
