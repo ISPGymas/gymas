@@ -29,7 +29,7 @@ const Workout: NextPage = () => {
       query(
         collection(firebaseDb, 'reservations'),
         where('workoutId', '==', workoutId),
-        where('clientId', '==', currentUser?.uid)
+        where('clientId', '==', currentUser?.userInfo?.id)
       )
     );
 
