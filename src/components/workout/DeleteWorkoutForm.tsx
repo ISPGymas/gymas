@@ -1,24 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { addDoc, collection, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { Button, SimpleGrid, GridItem, Alert, AlertIcon, Heading, useBreakpointValue } from '@chakra-ui/react';
-import TextField from '@/components/form/TextField';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { Button, SimpleGrid, GridItem, Alert, AlertIcon } from '@chakra-ui/react';
 import { firebaseDb } from '@/firebase';
-import { ActivityLevelEnum, GenderEnum, User } from '@/types';
-import SelectField from '../form/SelectField';
-import { MembershipStatus, MembershipType, Workout, WorkoutLocation, WorkoutType } from '@/types/gym';
-import TextAreaField from '../form/TextAreaField';
+import { WorkoutType } from '@/types/gym';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/router';
 
-const DeleteWorkoutForm = ({closeHandler, workoutId }: {closeHandler: any, workoutId: string }) => {
+const DeleteWorkoutForm = ({ closeHandler, workoutId }: { closeHandler: any; workoutId: string }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const colSpan = useBreakpointValue({ base: 2, md: 1 });
   const { currentUser } = useAuth();
   const router = useRouter();
-  const workoutRef = doc(firebaseDb, 'workouts', workoutId)
+  const workoutRef = doc(firebaseDb, 'workouts', workoutId);
   return (
     <Formik
       initialValues={{
@@ -28,12 +23,12 @@ const DeleteWorkoutForm = ({closeHandler, workoutId }: {closeHandler: any, worko
         location: '',
         type: WorkoutType.GROUP,
         maxGroupSize: 0,
-        trainerId: currentUser?.displayName
+        trainerId: currentUser?.displayName,
       }}
       validationSchema={yup.object({
         //TODO add validation
       })}
-      onSubmit={async ({...clientData }) => {
+      onSubmit={async () => {
         try {
           setError('');
           setLoading(true);
@@ -52,7 +47,14 @@ const DeleteWorkoutForm = ({closeHandler, workoutId }: {closeHandler: any, worko
         <form onSubmit={formik.handleSubmit}>
           <SimpleGrid columns={2} columnGap={3} rowGap={6} w="full">
             <GridItem colSpan={2}>
-              <Button isLoading={loading} variant="primary" width="full" mt={4} type="submit" onClick={() => router.replace(`/workouts`)}>
+              <Button
+                isLoading={loading}
+                variant="primary"
+                width="full"
+                mt={4}
+                type="submit"
+                onClick={() => router.replace(`/workouts`)}
+              >
                 Delete workout
               </Button>
             </GridItem>

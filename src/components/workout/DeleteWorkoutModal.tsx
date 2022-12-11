@@ -14,18 +14,18 @@ import {
 import DeleteWorkoutForm from './DeleteWorkoutForm';
 import DeleteButton from './DeleteWorkoutForm';
 
-const DeleteWorkoutModal = ({ userId, workoutId }: { userId: string, workoutId: string }) => {
+const DeleteWorkoutModal = ({ workoutId }: { workoutId: string }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { currentUser } = useAuth();
-  //ok
   return (
     <>
-      <Flex onClick={onOpen} bgColor='azure' w='full' justify='center'>
-          {currentUser ? (
-          <Flex bgColor='azure' w='60%' justifyContent='space-between'>
-          <Box> Delete </Box>
-          </Flex>) : null}
-        </Flex>
+      <Flex onClick={onOpen} bgColor="red.300" w="full" justify="center">
+        {currentUser ? (
+          <Flex bgColor="red.300" w="60%" justifyContent="center">
+            <Box> Delete </Box>
+          </Flex>
+        ) : null}
+      </Flex>
       <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
         <ModalOverlay />
         <ModalContent>

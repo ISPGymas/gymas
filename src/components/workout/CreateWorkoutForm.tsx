@@ -1,23 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, getDocs, query } from 'firebase/firestore';
 import { Button, SimpleGrid, GridItem, Alert, AlertIcon, Heading, useBreakpointValue } from '@chakra-ui/react';
 
 import TextField from '@/components/form/TextField';
 import { firebaseDb } from '@/firebase';
-import { ActivityLevelEnum, GenderEnum, Trainer, User } from '@/types';
-import SelectField from '../form/SelectField';
-import { MembershipStatus, MembershipType, WorkoutType } from '@/types/gym';
+import LocationSelectField from '../form/LocationSelectField';
+import { WorkoutLocation, WorkoutType } from '@/types/gym';
 import TextAreaField from '../form/TextAreaField';
 import { useAuth } from '@/context/AuthContext';
-import router from 'next/router';
 
-const CreateWorkoutForm = ({closeHandler }: {closeHandler: any }) => {
+const CreateWorkoutForm = ({ closeHandler }: { closeHandler: any }) => {
+  const [locations, setLocations] = useState<WorkoutLocation[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const colSpan = useBreakpointValue({ base: 2, md: 1 });
   const { currentUser } = useAuth();
+
+  useEffect(() => {
+    const getWorkoutLocations = async () => {
+      const workoutLocationCollections = await getDocs(query(collection(firebaseDb, 'workout_locations')));
+      const workoutLocationDocs = workoutLocationCollections.docs;
+      await Promise.all(
+        workoutLocationDocs.map(async (doc) => {
+          const workoutLocationData = doc.data() as WorkoutLocation;
+          setLocations((currentValues) =>
+            currentValues.some((currVal) => currVal.id === doc.id)
+              ? currentValues
+              : [...currentValues, { ...workoutLocationData, id: doc.id }]
+          );
+        })
+      );
+    };
+
+    getWorkoutLocations();
+  }, []);
 
   return (
     <Formik
@@ -25,22 +43,26 @@ const CreateWorkoutForm = ({closeHandler }: {closeHandler: any }) => {
         name: '',
         description: '',
         price: 0,
-        locationId: '',
         type: WorkoutType.GROUP,
         maxGroupSize: 0,
-        trainerId: currentUser?.displayName,
+        trainerId: currentUser?.userInfo?.id,
+        locationId: locations[0]?.id || '',
       }}
       validationSchema={yup.object({
-        //TODO add validation
+        name: yup.string().required(),
+        description: yup.string().optional(),
+        type: yup.string().oneOf(Object.values(WorkoutType)).required(),
+        price: yup.number().required(),
+        maxGroupSize: yup.number().required(),
+        trainerId: yup.string().required(),
+        locationId: yup.string().optional(),
       })}
-      onSubmit={async ({...clientData }) => {
+      onSubmit={async (workoutData) => {
         try {
           setError('');
           setLoading(true);
-
-          const client = await addDoc(collection(firebaseDb, 'workouts'), {
-            ...clientData
-          });
+          console.log(workoutData);
+          await addDoc(collection(firebaseDb, 'workouts'), workoutData);
         } catch (error) {
           console.warn(error);
           setError('Failed to create client. Please try again later');
@@ -60,7 +82,13 @@ const CreateWorkoutForm = ({closeHandler }: {closeHandler: any }) => {
               <TextField name="price" label="Price" placeholder="Enter workout price" isRequired={true} type="number" />
             </GridItem>
             <GridItem colSpan={2}>
-              <TextAreaField name="description" label="Description" placeholder="Describe your workout" isRequired={true} type="string" />
+              <TextAreaField
+                name="description"
+                label="Description"
+                placeholder="Describe your workout"
+                isRequired={true}
+                type="string"
+              />
             </GridItem>
             <GridItem colSpan={2} textAlign="center">
               <Heading size="md">Choose workout type</Heading>
@@ -86,21 +114,10 @@ const CreateWorkoutForm = ({closeHandler }: {closeHandler: any }) => {
               </Button>
             </GridItem>
             <GridItem colSpan={colSpan}>
-              <TextField
-                name="location"
-                label="Location"
-                placeholder="Enter workout location"
-                isRequired={true}
-                type="string"
-              />
+              <LocationSelectField name={`locationId`} values={locations} label={'Choose workout location'} required />
             </GridItem>
             <GridItem colSpan={colSpan}>
-              <TextField
-                name="maxGroupSize"
-                label="Maximum group size"
-                isRequired={true}
-                type="number"
-              />
+              <TextField name="maxGroupSize" label="Maximum group size" isRequired={true} type="number" />
             </GridItem>
             <GridItem colSpan={2}>
               <Button isLoading={loading} variant="primary" width="full" mt={4} type="submit">

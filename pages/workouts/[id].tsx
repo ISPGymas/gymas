@@ -7,7 +7,7 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, 
 import moment from 'moment';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const Workout: NextPage = () => {
   const [alreadyReserved, setAlreadyReserved] = useState<boolean>(true);
@@ -29,7 +29,7 @@ const Workout: NextPage = () => {
       query(
         collection(firebaseDb, 'reservations'),
         where('workoutId', '==', workoutId),
-        where('clientId', '==', currentUser?.uid)
+        where('clientId', '==', currentUser?.userInfo?.id)
       )
     );
 
@@ -74,11 +74,11 @@ const Workout: NextPage = () => {
   }, [fetchWorkoutData]);
 
   const handleTrainingReserve = useCallback(async () => {
-    const startDate = moment().date();
-    const endDate = moment().add(7, 'days').date();
+    const startDate = moment();
+    const endDate = moment().add(7, 'days');
     try {
       await addDoc(collection(firebaseDb, 'reservations'), {
-        clientId: currentUser?.uid,
+        clientId: currentUser?.userInfo?.id,
         end_date: endDate,
         start_date: startDate,
         trainerId: trainer?.id,
@@ -93,7 +93,7 @@ const Workout: NextPage = () => {
     } catch (err) {
       console.log(err);
     }
-  }, [currentUser?.uid, trainer?.id, workoutId, workout?.reserved, fetchWorkoutData]);
+  }, [currentUser, trainer?.id, workoutId, workout?.reserved, fetchWorkoutData]);
 
   const handleCancelReservation = useCallback(async () => {
     if (!workout || !currentUser) {
@@ -157,13 +157,13 @@ const Workout: NextPage = () => {
               <Divider orientation="horizontal" mb={3} />
               <Box>
                 <Heading size="md">Max group size:</Heading>
-                <Heading size="sm">{`${workout?.groupSize || ''}`}</Heading>
+                <Heading size="sm">{`${workout?.maxGroupSize || ''}`}</Heading>
               </Box>
               <Box pt={3}>
                 <Heading size="md">Reserved:</Heading>
                 <Heading
                   size="sm"
-                  color={(workout?.reserved || 0) >= (workout?.groupSize || 0) ? 'red' : 'green'}
+                  color={(workout?.reserved || 0) >= (workout?.maxGroupSize || 0) ? 'red' : 'green'}
                 >{`${workout?.reserved}`}</Heading>
               </Box>
               <Box pt={3}>
@@ -178,7 +178,7 @@ const Workout: NextPage = () => {
             {!alreadyReserved ? (
               <Button
                 variant="primary"
-                disabled={(workout?.reserved || 0) >= (workout?.groupSize || 0)}
+                disabled={(workout?.reserved || 0) >= (workout?.maxGroupSize || 0)}
                 isFullWidth
                 onClick={handleTrainingReserve}
               >
