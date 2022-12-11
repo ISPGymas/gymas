@@ -93,7 +93,7 @@ const Workout: NextPage = () => {
     } catch (err) {
       console.log(err);
     }
-  }, [currentUser?.uid, trainer?.id, workoutId, workout?.reserved, fetchWorkoutData]);
+  }, [currentUser, trainer?.id, workoutId, workout?.reserved, fetchWorkoutData]);
 
   const handleCancelReservation = useCallback(async () => {
     if (!workout || !currentUser) {
@@ -157,13 +157,13 @@ const Workout: NextPage = () => {
               <Divider orientation="horizontal" mb={3} />
               <Box>
                 <Heading size="md">Max group size:</Heading>
-                <Heading size="sm">{`${workout?.groupSize || ''}`}</Heading>
+                <Heading size="sm">{`${workout?.maxGroupSize || ''}`}</Heading>
               </Box>
               <Box pt={3}>
                 <Heading size="md">Reserved:</Heading>
                 <Heading
                   size="sm"
-                  color={(workout?.reserved || 0) >= (workout?.groupSize || 0) ? 'red' : 'green'}
+                  color={(workout?.reserved || 0) >= (workout?.maxGroupSize || 0) ? 'red' : 'green'}
                 >{`${workout?.reserved}`}</Heading>
               </Box>
               <Box pt={3}>
@@ -178,7 +178,7 @@ const Workout: NextPage = () => {
             {!alreadyReserved ? (
               <Button
                 variant="primary"
-                disabled={(workout?.reserved || 0) >= (workout?.groupSize || 0)}
+                disabled={(workout?.reserved || 0) >= (workout?.maxGroupSize || 0)}
                 isFullWidth
                 onClick={handleTrainingReserve}
               >
