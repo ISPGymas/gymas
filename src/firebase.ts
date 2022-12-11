@@ -1,6 +1,6 @@
-import { initializeApp } from 'firebase/app'
-import { getFirestore } from '@firebase/firestore'
-import { getStorage } from 'firebase/storage'
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from '@firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 const app = initializeApp({
   apiKey: process.env.FIREBASE_API_KEY,
@@ -10,9 +10,9 @@ const app = initializeApp({
   messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID,
   measurementId: process.env.FIREBASE_MEASUREMENT_ID,
-})
+});
 
-export const firebaseDb = getFirestore(app)
-export const firebaseStorage = getStorage(app)
+export const firebaseDb = getFirestore(app);
+export const firebaseStorage = getStorage(app);
 
-export default app
+export default app;
