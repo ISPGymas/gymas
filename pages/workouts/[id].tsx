@@ -3,7 +3,18 @@ import { firebaseDb } from '@/firebase';
 import { Trainer, User } from '@/types';
 import { Workout, WorkoutAddress, WorkoutLocation } from '@/types/gym';
 import { Box, Button, Divider, Grid, GridItem, Heading } from '@chakra-ui/react';
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  Timestamp,
+} from 'firebase/firestore';
 import moment from 'moment';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -74,8 +85,8 @@ const Workout: NextPage = () => {
   }, [fetchWorkoutData]);
 
   const handleTrainingReserve = useCallback(async () => {
-    const startDate = moment();
-    const endDate = moment().add(7, 'days');
+    const startDate = Timestamp.now();
+    const endDate = Timestamp.fromDate(moment().add(7, 'days').toDate());
     try {
       await addDoc(collection(firebaseDb, 'reservations'), {
         clientId: currentUser?.userInfo?.id,
