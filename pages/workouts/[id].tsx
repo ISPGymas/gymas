@@ -7,7 +7,7 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, 
 import moment from 'moment';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const Workout: NextPage = () => {
   const [alreadyReserved, setAlreadyReserved] = useState<boolean>(true);
@@ -74,11 +74,11 @@ const Workout: NextPage = () => {
   }, [fetchWorkoutData]);
 
   const handleTrainingReserve = useCallback(async () => {
-    const startDate = moment().date();
-    const endDate = moment().add(7, 'days').date();
+    const startDate = moment();
+    const endDate = moment().add(7, 'days');
     try {
       await addDoc(collection(firebaseDb, 'reservations'), {
-        clientId: currentUser?.uid,
+        clientId: currentUser?.userInfo?.id,
         end_date: endDate,
         start_date: startDate,
         trainerId: trainer?.id,
