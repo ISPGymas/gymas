@@ -4,7 +4,7 @@ import WorkoutComponent from '@/components/workout/Workout';
 import { useAuth } from '@/context/AuthContext';
 import { firebaseDb } from '@/firebase';
 import { GymClient, UserType } from '@/types';
-import { SimpleGrid, Spinner } from '@chakra-ui/react';
+import { Heading, SimpleGrid, Spinner } from '@chakra-ui/react';
 import { collection, getDoc, getDocs, query, doc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
@@ -41,14 +41,20 @@ const ClientList = () => {
 
   return (
     <div>
-      {!isLoading ? (
-        <SimpleGrid columns={columns} templateRows={'masonry'}>
-          {clients.map((client) => (
-            <ClientComponent key={client.id} client={client}></ClientComponent>
-          ))}
-        </SimpleGrid>
+      {currentUser && currentUser.userType !== UserType.CLIENT ? (
+        <>
+          {!isLoading ? (
+            <SimpleGrid columns={columns} templateRows={'masonry'}>
+              {clients.map((client) => (
+                <ClientComponent key={client.id} client={client}></ClientComponent>
+              ))}
+            </SimpleGrid>
+          ) : (
+            <Spinner />
+          )}
+        </>
       ) : (
-        <Spinner />
+        <Heading>You have no permissions to view clients list</Heading>
       )}
     </div>
   );

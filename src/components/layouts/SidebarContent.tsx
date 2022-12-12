@@ -4,6 +4,7 @@ import { Box, CloseButton, Flex, useColorModeValue, Text, BoxProps } from '@chak
 import { NavItem } from './NavItem';
 import { HomeOutlined, TeamOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
+import { UserType } from '@/types';
 
 interface LinkItemProps {
   name: string;
@@ -15,15 +16,16 @@ interface SidebarProps extends BoxProps {
   onClose: () => void;
 }
 
-const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', link: '/', icon: HomeOutlined },
-  { name: 'Trainers', link: '/trainers', icon: TeamOutlined },
-  { name: 'Workouts', link: '/workouts', icon:  ThunderboltOutlined},
-  { name: 'Clients' , link: '/clients', icon: TeamOutlined}
-];
-
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const { currentUser } = useAuth();
+  const LinkItems: Array<LinkItemProps> = [
+    { name: 'Home', link: '/', icon: HomeOutlined },
+    { name: 'Trainers', link: '/trainers', icon: TeamOutlined },
+    { name: 'Workouts', link: '/workouts', icon: ThunderboltOutlined },
+  ];
+  if (currentUser && currentUser.userType !== UserType.CLIENT) {
+    LinkItems.push({ name: 'Clients', link: '/clients', icon: TeamOutlined });
+  }
 
   return (
     <Box
