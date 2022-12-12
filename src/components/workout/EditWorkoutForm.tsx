@@ -61,7 +61,7 @@ const EditWorkoutForm = ({ closeHandler, workout }: { closeHandler: any; workout
           setError('');
           setLoading(true);
 
-          await updateDoc(workoutRef, clientData);
+          await updateDoc(workoutRef, clientData as any);
         } catch (error) {
           console.warn(error);
           setError('Failed to create client. Please try again later');
