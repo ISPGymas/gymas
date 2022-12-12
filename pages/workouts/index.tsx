@@ -24,7 +24,7 @@ const WorkoutsList = () => {
           const workoutLocationCollection = await getDoc(
             doc(firebaseDb, 'workout_locations', workoutData.locationId as string)
           );
-          const workoutLocationData = workoutLocationCollection.data();
+          const workoutLocationData = workoutLocationCollection.data() as WorkoutLocation;
           setWorkouts((currentValues) =>
             currentValues.some((currVal) => currVal.id === workoutDoc.id)
               ? currentValues
@@ -33,7 +33,7 @@ const WorkoutsList = () => {
                   {
                     ...workoutData,
                     id: workoutDoc.id,
-                    location: { ...workoutLocationData, id: workoutLocationCollection.id } as WorkoutLocation,
+                    location: { ...workoutLocationData, id: workoutLocationCollection.id },
                   },
                 ]
           );

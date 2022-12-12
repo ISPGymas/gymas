@@ -57,11 +57,11 @@ export type WorkoutWithLocation = Workout & {
 };
 
 export type WorkoutLocation = {
-  id: String;
-  addressId: String;
+  id: string;
+  addressId: string;
   area: number;
-  description: String;
-  name: String;
+  description: string;
+  name: string;
 };
 
 export type WorkoutAddress = {

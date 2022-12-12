@@ -44,7 +44,7 @@ const ClientList = () => {
       {!isLoading ? (
         <SimpleGrid columns={columns} templateRows={'masonry'}>
           {clients.map((client) => (
-            <ClientComponent client={client}></ClientComponent>
+            <ClientComponent key={client.id} client={client}></ClientComponent>
           ))}
         </SimpleGrid>
       ) : (
