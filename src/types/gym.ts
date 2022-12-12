@@ -16,6 +16,12 @@ export enum WorkoutType {
   SOLO = 'Solo',
 }
 
+export enum Goal {
+  WEIGHTLOSS = 'Weightloss',
+  MUSCLE = 'Muscle',
+  MAINTAIN = 'Maintain'
+}
+
 export type Membership = {
   id: string;
   clientId: string;
@@ -41,21 +47,16 @@ export type Workout = {
   trainerId: string;
   price: number;
   locationId: string;
-  maxGroupSize: number;
-  type: WorkoutType;
-  reserved?: number;
-};
-
-export type WorkoutWithLocation = Workout & {
-  location: WorkoutLocation;
+  groupSize: number;
+  reserved: number;
 };
 
 export type WorkoutLocation = {
-  id: string;
-  addressId: string;
+  id: String;
+  addressId: String;
   area: number;
-  description: string;
-  name: string;
+  description: String;
+  name: String;
 };
 
 export type WorkoutAddress = {
@@ -66,3 +67,16 @@ export type WorkoutAddress = {
   street: string;
   zipCode: string;
 };
+
+
+export type MealPlan = {
+  clientId: string,
+  goal: Goal,
+  calories: number,
+  protein: number,
+  carbs: number,
+  fat: number,
+  fibre: number,
+  sugarRatio: number,
+  allergies: string,
+}

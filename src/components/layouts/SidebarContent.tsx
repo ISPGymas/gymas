@@ -19,6 +19,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', link: '/', icon: HomeOutlined },
   { name: 'Trainers', link: '/trainers', icon: TeamOutlined },
   { name: 'Workouts', link: '/workouts', icon:  ThunderboltOutlined},
+  { name: 'Clients' , link: '/clients', icon: TeamOutlined}
 ];
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {

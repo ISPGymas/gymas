@@ -4,13 +4,13 @@ import { VStack, Image } from '@chakra-ui/react'
 import { downloadFile } from '@/utils'
 import { User } from '@/types'
 
-const Avatar = ({ user }: { user: User }) => {
+const Avatar = ({ user }: { user: User | null }) => {
   const [avatar, setAvatar] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const retrieveUserAvatar = async () => {
-      const avatarPath = user.avatar || 'avatars/default.png'
+      const avatarPath = user?.avatar || 'avatars/default.png'
       const avatar = await downloadFile(avatarPath)
       setAvatar(avatar)
       setIsLoading(false)
