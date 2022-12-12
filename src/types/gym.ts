@@ -48,7 +48,12 @@ export type Workout = {
   price: number;
   locationId: string;
   maxGroupSize: number;
-  reserved: number;
+  type: WorkoutType;
+  reserved?: number;
+};
+
+export type WorkoutWithLocation = Workout & {
+  location: WorkoutLocation;
 };
 
 export type WorkoutLocation = {
